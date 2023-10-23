@@ -2,3 +2,7 @@ flask
 flask-socketio
 eventlet
 gunicorn
+langchain
+pinecone
+os
+nest_asyncio
