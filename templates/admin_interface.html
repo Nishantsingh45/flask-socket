@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+</head>
+<body>
+    <h1>Admin Interface</h1>
+    <h2>Users:</h2>
+    <ul>
+        {% for user in users %}
+            <li><a href="/admin_interface/{{ user }}">{{ user }}</a></li>
+        {% endfor %}
+    </ul>
+    <div id="messages"></div>
+    <form id="admin-message-form">
+        <input type="text" id="admin-message-input" placeholder="Type your reply...">
+        <button type="submit">Send</button>
+        <button type="button" id="bot-reply-toggle">Toggle Bot Reply</button>
+    </form>
+
+    <script>
+        const socket = io.connect("http://" + document.domain + ":" + location.port);
+
+        socket.on("connect", function () {
+            console.log("Connected to server.");
+            socket.emit("admin_join_room");
+        });
+
+        socket.on("message", function (data) {
+            const messages = document.getElementById("messages");
+            messages.innerHTML += "<p>" + data.user + ": " + data.message + "</p>";
+        });
+
+        document.getElementById("admin-message-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const adminMessageInput = document.getElementById("admin-message-input");
+            const adminMessage = adminMessageInput.value;
+            socket.emit("admin_send_message", { user: "Admin", message: adminMessage });
+            adminMessageInput.value = "";
+        });
+
+        const botReplyToggle = document.getElementById("bot-reply-toggle");
+        botReplyToggle.addEventListener("click", function () {
+            socket.emit("toggle_bot");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+</head>
+<body>
+    <h1>User Interface</h1>
+    <form id="user-message-form">
+        <input type="text" id="username" placeholder="Enter your username">
+        <input type="text" id="user-message-input" placeholder="Type your query...">
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="messages"></div>
+
+    <script>
+        const socket = io.connect("http://" + document.domain + ":" + location.port);
+
+        socket.on("connect", function () {
+            console.log("Connected to server.");
+            socket.emit("join_room");
+        });
+
+        socket.on("message", function (data) {
+            const messages = document.getElementById("messages");
+            messages.innerHTML += "<p>" + data.user + ": " + data.message + "</p>";
+        });
+
+        document.getElementById("user-message-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const userMessageInput = document.getElementById("user-message-input");
+            const userMessage = userMessageInput.value;
+            socket.emit("user_send_message", { user: username, message: userMessage });
+            userMessageInput.value = "";
+        });
+    </script>
+</body>
+</html>
