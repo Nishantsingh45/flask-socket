@@ -3,6 +3,6 @@ flask-socketio
 eventlet
 gunicorn
 langchain
-pinecone
+pinecone-client
 os
 nest_asyncio
