@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room
-from qa_service import query_document
+#from qa_service import query_document
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -37,7 +37,7 @@ def join_user_room():
 def handle_message(data):
     if bot_enabled:
         query = data["message"]
-        bot_response = query_document(query)  # Assuming query_document function is available
+        bot_response = 'Hi bot reply here'  # Assuming query_document function is available
         emit("message", {"user": "Admin", "message": bot_response}, room=user_room)
     else:
         emit("message", data, room=user_room, broadcast=True)
